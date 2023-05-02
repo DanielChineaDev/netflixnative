@@ -1,3 +1,4 @@
+import {useEffect, useState} from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -13,8 +14,61 @@ import {
 import tw from 'twrnc';
 
 import Logo from '../static/images/netflix-logo.svg';
+import {EyeIcon} from 'react-native-heroicons/outline';
+import {EyeSlashIcon} from 'react-native-heroicons/outline';
 
 const SignUp = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isValidEmail, setIsValidEmail] = useState(false);
+  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  useEffect(() => {
+    debounce(emailValidation());
+    console.log('Email: ', email, isValidEmail);
+  }, [email]);
+
+  useEffect(() => {
+    debounce(passwordValidation());
+    console.log('Password: ', password, isValidPassword);
+  }, [password]);
+
+  const emailValidation = () => {
+    const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    if (!email || emailRegex.test(email) === false) {
+      setIsValidEmail(false);
+      return false;
+    }
+    setIsValidEmail(true);
+    return true;
+  };
+
+  const passwordValidation = () => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/i;
+    if (!password || passwordRegex.test(password) === false) {
+      setIsValidPassword(false)
+      return false
+    }
+    setIsValidPassword(true)
+    return true
+  }
+
+  // Utility FN · Mover a carpeta utils/utils.js
+  const debounce = fn => {
+    let id = null;
+
+    return (...args) => {
+      if (id) {
+        clearTimeout(id);
+      }
+      id = setTimeout(() => {
+        fn(...args);
+        id = null;
+      }, 300);
+    };
+  };
+
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
       <TouchableWithoutFeedback
@@ -30,25 +84,67 @@ const SignUp = ({navigation}) => {
             <Logo width={90} />
           </View>
           <View style={tw`flex-1 items-center justify-center px-12`}>
-            <Text style={tw`text-white text-2xl mb-12 self-start`}>Registrarme</Text>
+            <Text style={tw`text-white text-2xl mb-12 self-start`}>
+              Registrate
+            </Text>
             <TextInput
-              style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-8`}
+              style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-2 ${
+                (!isValidEmail && email !== '') && 'border border-red-500'
+              }`}
               placeholderTextColor={tw.color('text-white/20')}
               placeholder={'Email'}
+              value={email}
+              onChangeText={textInput => {
+                setEmail(textInput);
+              }}
+              autoCorrect={false}
+              autoCapitalize={'none'}
               keyboardType={'email-address'}
             />
-            <TextInput
-              style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-8`}
-              placeholderTextColor={tw.color('text-white/20')}
-              placeholder={'Contraseña'}
-            />
+            <Text
+              style={tw`text-red-500 self-start mb-6 ${
+                (isValidEmail || email === '') && 'opacity-0'
+              }`}
+            >
+              Email incorrecto.
+            </Text>
+            <View style={tw`relative flex flex-row`}>
+              <Pressable onPress={() => {
+                setIsPasswordVisible(!isPasswordVisible)
+              }} style={tw`absolute top-3 right-3 z-10`}>
+                {!isPasswordVisible ? (
+                  <EyeSlashIcon style={tw`w-6 h-6 text-white/40`} />
+                ) : (
+                  <EyeIcon style={tw`w-6 h-6 text-white/40`} />
+                )}
+              </Pressable>
+              <TextInput
+                style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-2 ${
+                (!isValidPassword && password !== '') && 'border border-red-500'
+              }`}
+                placeholderTextColor={tw.color('text-white/20')}
+                placeholder={'Contraseña'}
+                value={password}
+                onChangeText={passwordInput => {
+                  setPassword(passwordInput)
+                }}
+                secureTextEntry={!isPasswordVisible}
+              />
+            </View>
+            <Text
+              style={tw`text-red-500 self-start mb-6 ${
+                (isValidPassword || password === '') && 'opacity-0'
+              }`}
+            >
+              Debe contener A-b-0-!
+            </Text>
             <Pressable style={tw`mb-12`}>
-              <Text style={tw`text-white/40 text-xl`}>Registrarme</Text>
+              <Text style={tw`text-white/40 text-xl`}>Registrate</Text>
             </Pressable>
             <View style={tw`flex flex-row items-center`}>
               <Text style={tw`text-white`}>¿Ya tienes una cuenta? </Text>
               <Pressable onPress={() => navigation.navigate('SignIn')}>
-                <Text style={tw`text-red-500 font-bold`}>Ingresar</Text>
+                <Text style={tw`text-red-500 font-bold`}>Ingresa</Text>
               </Pressable>
             </View>
           </View>
