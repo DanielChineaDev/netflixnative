@@ -14,7 +14,7 @@ import tw from 'twrnc';
 
 import Logo from '../static/images/netflix-logo.svg';
 
-const SignUp = ({navigation}) => {
+const PasswordRecovery = ({navigation}) => {
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
       <TouchableWithoutFeedback
@@ -30,27 +30,21 @@ const SignUp = ({navigation}) => {
             <Logo width={90} />
           </View>
           <View style={tw`flex-1 items-center justify-center px-12`}>
-            <Text style={tw`text-white text-2xl mb-12 self-start`}>Registrarme</Text>
+            <Text style={tw`text-white text-2xl mb-12 self-start`}>Recuperar contraseña</Text>
             <TextInput
               style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-8`}
               placeholderTextColor={tw.color('text-white/20')}
               placeholder={'Email'}
+              autoCorrect={false}
+              autoCapitalize={'none'}
               keyboardType={'email-address'}
             />
-            <TextInput
-              style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-8`}
-              placeholderTextColor={tw.color('text-white/20')}
-              placeholder={'Contraseña'}
-            />
             <Pressable style={tw`mb-12`}>
-              <Text style={tw`text-white/40 text-xl`}>Registrarme</Text>
+              <Text style={tw`text-white/40 text-xl`}>Recuperar contraseña</Text>
             </Pressable>
-            <View style={tw`flex flex-row items-center`}>
-              <Text style={tw`text-white`}>¿Ya tienes una cuenta? </Text>
-              <Pressable onPress={() => navigation.navigate('SignIn')}>
-                <Text style={tw`text-red-500 font-bold`}>Ingresar</Text>
-              </Pressable>
-            </View>
+            <Pressable onPress={() => navigation.goBack()} style={tw`mb-16`}>
+              <Text style={tw`text-white`}>Volver</Text>
+            </Pressable>
           </View>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
@@ -58,4 +52,4 @@ const SignUp = ({navigation}) => {
   );
 };
 
-export default SignUp;
+export default PasswordRecovery;

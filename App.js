@@ -6,19 +6,44 @@
  */
 
 import React from 'react';
-import {SafeAreaView, ScrollView, Text, View} from 'react-native';
+import tw from 'twrnc';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {supabase} from './lib/supabase';
 
-import SignUp from './screens/signup'
-import SignIn from './screens/signin'
+import SignUp from './screens/signup';
+import SignIn from './screens/signin';
+import PasswordRecovery from './screens/passwordRecovery';
 
-import tw from 'twrnc'
-
-import { supabase } from './lib/supabase';
+const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <SignUp />
-    // <SignIn />
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="SignIn"
+          options={{
+            headerShown: false,
+          }}
+          component={SignIn}
+        />
+        <Stack.Screen
+          name="SignUp"
+          options={{
+            headerShown: false,
+          }}
+          component={SignUp}
+        />
+        <Stack.Screen
+          name="PasswordRecovery"
+          options={{
+            headerShown: false,
+          }}
+          component={PasswordRecovery}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
