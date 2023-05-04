@@ -85,6 +85,10 @@ const HomeTabs = () => {
             );
           }
         },
+        tabBarStyle: {
+          backgroundColor: tw.color('gray-950'),
+          borderTopWidth: 0,
+        },
         tabBarLabelStyle: {
           marginTop: -10,
           marginBottom: 7,
