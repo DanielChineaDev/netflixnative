@@ -1,6 +1,7 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
   ImageBackground,
+  Platform,
   Pressable,
   SafeAreaView,
   Text,
@@ -8,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import tw from 'twrnc';
-import { useDeviceContext } from 'twrnc';
+import {useDeviceContext} from 'twrnc';
 import requests from '../lib/requests';
 //ICONS
 import {TvIcon} from 'react-native-heroicons/outline';
@@ -18,43 +19,42 @@ import {UserIcon} from 'react-native-heroicons/outline';
 import ImageColors from 'react-native-image-colors';
 import LinearGradient from 'react-native-linear-gradient';
 const Home = () => {
-  useDeviceContext(tw)
+  useDeviceContext(tw);
   const imgAssets = process.env.IMG_ASSETS;
   const [heroMovie, setHeroMovie] = useState();
   const [heroMovieColor, setHeroMovieColor] = useState();
 
-  const URLEncoder = (path = '') => {
-    if (isAndroid()) {
-      return String(path).replace(/\s+/g, '%20');
+  useEffect(() => {
+    const fetchColor = async () => {
+      const data = await ImageColors.getColors(
+        `${imgAssets}${heroMovie?.poster_path}`,
+        {
+          fallback: '#000000',
+          cache: true,
+          key: 'unique_key',
+        },
+      ).then(data => {
+        if (Platform.OS === 'ios') {
+          setHeroMovieColor(data.primary);
+        } else {
+          setHeroMovieColor(data.average);
+        }
+      });
     }
-
-    return path;
-  };
-
+    fetchColor()
+      .catch(e => {
+        console.log(e)
+        return e
+      });
+  }, [heroMovie])
+  
   useEffect(() => {
     fetch(`${requests.fetchTopRated}`)
       .then(res => res.json())
       .then(data => {
-        setHeroMovie(data.results[2]);
+        setHeroMovie(data.results[7]);
       });
   }, []);
-
-  const getImageColors = async uri => {
-    const result = await ImageColors.getColors(uri, {
-      fallback: '#228B22',
-      cache: true,
-      key: 'unique_key',
-    });
-    setHeroMovieColor(result.average);
-    console.log('COLOR 1:', result, heroMovieColor)
-  };
-
-  useEffect(() => {
-    // console.log(heroMovieColor, `${imgAssets}${heroMovie?.poster_path}`)
-    if (heroMovieColor) {
-      getImageColors(`${imgAssets}${heroMovie?.poster_path}`);
-    }
-  }, [heroMovieColor]);
 
   return (
     <SafeAreaView style={tw`bg-black flex-1`}>
@@ -107,21 +107,18 @@ const Home = () => {
         </Pressable>
       </View>
       <View style={tw`p-6 relative z-10`}>
-        {/* {console.log(`${imgAssets}${heroMovie?.poster_path}`)} */}
         <ImageBackground
           source={{uri: `${imgAssets}${heroMovie?.poster_path}`}}
           resizeMode={'cover'}
           style={tw`rounded-xl bg-white h-[500px] border border-white/30 overflow-hidden`}
         ></ImageBackground>
       </View>
-      {/* {heroMovieColor === undefined ? (
-        <Text style={tw`text-white`}>We don't have color</Text>
-      ) : (
+      {heroMovieColor !== undefined && (
         <LinearGradient
           style={tw`absolute top-0 left-0 w-screen h-screen z-0`}
           colors={[`${heroMovieColor}`, tw.color('black')]}
         />
-      )} */}
+      )}
     </SafeAreaView>
   );
 };
