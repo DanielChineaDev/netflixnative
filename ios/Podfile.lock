@@ -423,7 +423,7 @@ PODS:
     - React-perflogger (= 0.71.7)
   - RNGestureHandler (2.9.0):
     - React-Core
-  - RNImageColors (1.5.2):
+  - RNImageColors (1.3.1):
     - React-Core
   - RNScreens (3.20.0):
     - React-Core
@@ -652,7 +652,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: c5c89f8f543842dd864b63ded1b0bbb9c9445328
   ReactCommon: dbfbe2f7f3c5ce4ce44f43f2fd0d5950d1eb67c5
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
-  RNImageColors: 9ac05083b52d5c350e6972650ae3ba0e556466c1
+  RNImageColors: 5bb550d397934b18a55b8beec2af683bb9432898
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
