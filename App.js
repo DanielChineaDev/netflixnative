@@ -16,9 +16,7 @@ import {HomeIcon as HomeIconSolid} from 'react-native-heroicons/solid';
 import {StarIcon as StarIconSolid} from 'react-native-heroicons/solid';
 import {RocketLaunchIcon} from 'react-native-heroicons/outline';
 import {RocketLaunchIcon as RocketLaunchIconSolid} from 'react-native-heroicons/outline';
-import {supabase} from './lib/supabase';
-
-import {Text} from 'react-native';
+import {ToastProvider} from 'react-native-toast-notifications';
 
 import SignUp from './screens/signup';
 import SignIn from './screens/signin';
@@ -121,29 +119,55 @@ const HomeTabs = () => {
 };
 
 function App() {
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(false);
   return (
-    <NavigationContainer>
-      <RootStack.Navigator>
-        {!user ? (
-          <RootStack.Screen
-            name={'Auth'}
-            component={AuthNavigator}
-            options={{
-              headerShown: false,
-            }}
-          />
-        ) : (
-          <RootStack.Screen
-            name={'HomeTabs'}
-            component={HomeTabs}
-            options={{
-              headerShown: false,
-            }}
-          />
-        )}
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <ToastProvider
+      placement="top"
+      swipeEnabled={true}
+      offsetTop={68}
+      animationDuration={100}
+      duration={4000}
+      renderType={{
+        info: toast => (
+          <View
+            style={tw.style(
+              'relative flex flex-col w-10/12 pr-4 pl-8 py-3 bg-white rounded-2xl shadow-sm shadow-blue-gray-800 shadow-offset-[0px]/[6px] shadow-radius-2 shadow-opacity-5',
+              {borderLeftColor: '#2979FF'},
+            )}
+          >
+            <View style={tw`absolute w-2 h-2 bg-orange-500 rounded-full left-[14px] top-[21px]`}></View>
+            <Text style={tw`text-base text-orange-500`}>
+              {toast.message}
+            </Text>
+            <Text style={tw`text-sm text-blue-gray-600`}>
+              {toast.data.subtitle}
+            </Text>
+          </View>
+        ),
+      }}
+    >
+      <NavigationContainer>
+        <RootStack.Navigator>
+          {!user ? (
+            <RootStack.Screen
+              name={'Auth'}
+              component={AuthNavigator}
+              options={{
+                headerShown: false,
+              }}
+            />
+          ) : (
+            <RootStack.Screen
+              name={'HomeTabs'}
+              component={HomeTabs}
+              options={{
+                headerShown: false,
+              }}
+            />
+          )}
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </ToastProvider>
   );
 }
 

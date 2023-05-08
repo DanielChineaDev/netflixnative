@@ -11,18 +11,33 @@ import {
   View,
 } from 'react-native';
 
+import auth from '@react-native-firebase/auth';
 import tw from 'twrnc';
+import {useToast} from 'react-native-toast-notifications';
 
 import Logo from '../static/images/netflix-logo.svg';
 import {EyeIcon} from 'react-native-heroicons/outline';
 import {EyeSlashIcon} from 'react-native-heroicons/outline';
 
 const SignUp = ({navigation}) => {
+  const [user, setUser] = useState();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [isValidPassword, setIsValidPassword] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const toast = useToast();
+
+  // Handle user state changes
+  const onAuthStateChanged = user => {
+    setUser(user);
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
 
   useEffect(() => {
     debounce(emailValidation());
@@ -47,12 +62,12 @@ const SignUp = ({navigation}) => {
   const passwordValidation = () => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/i;
     if (!password || passwordRegex.test(password) === false) {
-      setIsValidPassword(false)
-      return false
+      setIsValidPassword(false);
+      return false;
     }
-    setIsValidPassword(true)
-    return true
-  }
+    setIsValidPassword(true);
+    return true;
+  };
 
   // Utility FN · Mover a carpeta utils/utils.js
   const debounce = fn => {
@@ -67,6 +82,40 @@ const SignUp = ({navigation}) => {
         id = null;
       }, 300);
     };
+  };
+
+  const registerUser = () => {
+    if (isValidEmail && isValidPassword) {
+      auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          console.log('User account created & signed in!');
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+            toast.show({
+              type: 'info',
+              text1: 'Este email ya existe.',
+              text2: 'Por favor prueba un diferente.'
+            });
+            toast.show('Este email ya existe', {
+              type: 'info',
+              data: {
+                subtitle: 'Por favor prueba uno diferente.',
+              },
+            });
+            return error
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+            return error
+          }
+
+          console.error(error);
+        });
+    }
   };
 
   return (
@@ -89,7 +138,7 @@ const SignUp = ({navigation}) => {
             </Text>
             <TextInput
               style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-2 ${
-                (!isValidEmail && email !== '') && 'border border-red-500'
+                !isValidEmail && email !== '' && 'border border-red-500'
               }`}
               placeholderTextColor={tw.color('text-white/20')}
               placeholder={'Email'}
@@ -109,9 +158,12 @@ const SignUp = ({navigation}) => {
               Email incorrecto.
             </Text>
             <View style={tw`relative flex flex-row`}>
-              <Pressable onPress={() => {
-                setIsPasswordVisible(!isPasswordVisible)
-              }} style={tw`absolute top-3 right-3 z-10`}>
+              <Pressable
+                onPress={() => {
+                  setIsPasswordVisible(!isPasswordVisible);
+                }}
+                style={tw`absolute top-3 right-3 z-10`}
+              >
                 {!isPasswordVisible ? (
                   <EyeSlashIcon style={tw`w-6 h-6 text-white/40`} />
                 ) : (
@@ -120,13 +172,13 @@ const SignUp = ({navigation}) => {
               </Pressable>
               <TextInput
                 style={tw`h-12 px-4 font-medium bg-white/20 rounded w-full text-white mb-2 ${
-                (!isValidPassword && password !== '') && 'border border-red-500'
-              }`}
+                  !isValidPassword && password !== '' && 'border border-red-500'
+                }`}
                 placeholderTextColor={tw.color('text-white/20')}
                 placeholder={'Contraseña'}
                 value={password}
                 onChangeText={passwordInput => {
-                  setPassword(passwordInput)
+                  setPassword(passwordInput);
                 }}
                 secureTextEntry={!isPasswordVisible}
               />
@@ -138,7 +190,13 @@ const SignUp = ({navigation}) => {
             >
               Debe contener A-b-0-!
             </Text>
-            <Pressable style={tw`mb-12`}>
+            <Pressable
+              onPress={() => {
+                console.log('TOAST!');
+                registerUser();
+              }}
+              style={tw`mb-12`}
+            >
               <Text style={tw`text-white/40 text-xl`}>Registrate</Text>
             </Pressable>
             <View style={tw`flex flex-row items-center`}>

@@ -1,4 +1,4 @@
-package com.netflixcloneapp;
+package com.netflixclone.org;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
