@@ -5,7 +5,7 @@
  * @format
  */
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import tw from 'twrnc';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -24,6 +24,8 @@ import PasswordRecovery from './screens/passwordRecovery';
 import Home from './screens/home';
 import TopRated from './screens/topRated';
 import Discover from './screens/discover';
+
+import auth from "@react-native-firebase/auth"
 
 // Root Stack envuelve todo la app
 const RootStack = createNativeStackNavigator();
@@ -119,7 +121,17 @@ const HomeTabs = () => {
 };
 
 function App() {
-  const [user, setUser] = useState(false);
+  const [user, setUser] = useState(true);
+  const onAuthStateChanged = user => {
+    setUser(user);
+    console.log('USER:', user);
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
   return (
     <ToastProvider
       placement="top"

@@ -11,6 +11,7 @@ import {
 import tw from 'twrnc';
 import {useDeviceContext} from 'twrnc';
 import requests from '../lib/requests';
+
 //ICONS
 import {TvIcon} from 'react-native-heroicons/outline';
 import {MagnifyingGlassIcon} from 'react-native-heroicons/outline';
@@ -112,6 +113,7 @@ const Home = () => {
           resizeMode={'cover'}
           style={tw`rounded-xl bg-white h-[500px] border border-white/30 overflow-hidden`}
         ></ImageBackground>
+        
       </View>
       {heroMovieColor !== undefined && (
         <LinearGradient
